@@ -4,6 +4,9 @@ on:
   push:
     branches:
     - "*"
+  pull_requests:
+    branches:
+    - "*"
 
 jobs:
   run_api_test:
