@@ -8,7 +8,7 @@ on:
 jobs:
   run_api_test:
     runs-on: ubuntu-latest
-    if: github.repository != 'ContainerSolutions/API-Excercise'
+    #if: github.repository != 'ContainerSolutions/API-Excercise'
     steps:
     - uses: actions/checkout@v2
     - uses: engineerd/setup-kind@v0.5.0
