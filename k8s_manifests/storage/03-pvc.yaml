@@ -5,8 +5,8 @@ metadata:
   namespace: titanic
 spec:
   accessModes:
-  - ReadWriteOnce
-  storageClassName: default
+    - ReadWriteOnce
+  storageClassName: standard
   resources:
     requests:
       storage: 1Gi
