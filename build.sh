@@ -1,3 +1,3 @@
 #!/bin/bash
-docker build . -t trow.local/api-excercise:latest
+docker build . -t kind-registry:5000/api-excercise:latest
 

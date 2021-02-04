@@ -1,4 +1,4 @@
 #!/bin/bash
 
-docker push  trow.local/api-excercise:latest
+docker push  kind-registry:5000/api-excercise:latest
 
