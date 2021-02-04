@@ -37,6 +37,7 @@ jobs:
         run: |
           echo "127.0.0.1 trow.local" | sudo tee -a /etc/hosts
           echo "127.0.0.1 api.awesome" | sudo tee -a /etc/hosts
+          docker network connect "kind" --link-local-ip || true
       - name: Setup Docker To Validate Certs
         run: |
           sudo mkdir -p /etc/docker/certs.d/trow.local/
