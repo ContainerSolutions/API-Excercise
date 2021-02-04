@@ -26,7 +26,7 @@ spec:
               do echo waiting for database; sleep 2; done;",
             ]
       containers:
-        - image: trow.local/api-excercise:latest
+        - image: kind-registry:5000/api-excercise:latest
           name: titanic-backend
           command: ["/usr/local/bin/server"]
           args: ["listen", "--env", "prod"]
