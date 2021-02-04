@@ -1,6 +1,10 @@
 # a cluster with 1 control-plane nodes and 1 workers
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
+containerdConfigPatches:
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."127.0.0.1:5000"]
+      endpoint = ["http://kind-registry:5000"]
 nodes:
   - role: control-plane
     kubeadmConfigPatches:
