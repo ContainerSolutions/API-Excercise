@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: titanic
+  labels:
+    app: titanic
+  namespace: titanic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: titanic
+  template:
+    metadata:
+      labels:
+        app: titanic
+      namespace: titanic
+    spec:
+      initContainers:
+        - name: check-postgres-ready
+          image: postgres:9.6.5
+          command: [
+              "sh",
+              "-c",
+              "until pg_isready -h postgres -p 5432;
+              do echo waiting for database; sleep 2; done;",
+            ]
+      containers:
+        - image: trow.local/api-excercise:latest
+          name: titanic-backend
+          command: ["/usr/local/bin/server"]
+          args: ["listen", "--env", "prod"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: titanic-db-secret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: titanic-db-secret
+                  key: password
+            - name: DB_HOST
+              value: postgres
+            - name: DB_SSLMODE
+              value: disable

@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Running tests (through docker-compose)"
+docker-compose exec backend go test ./...

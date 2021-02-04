@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+  namespace: titanic
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+      namespace: titanic
+    spec:
+      containers:
+      - name: postgres
+        image: anonymouzaccount/titanic-database:v5
+        imagePullPolicy: "IfNotPresent"
+        ports:
+        - containerPort: 5432
+        env:
+        - name: PGDATA
+          value: postgres
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: titanic-db-secret
+              key: username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: titanic-db-secret
+              key: password
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgresdb
+          subPath: postgres
+      volumes:
+      - name: postgresdb
+        persistentVolumeClaim:
+          claimName: titanic-pvc

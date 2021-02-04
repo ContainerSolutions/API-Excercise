@@ -1,3 +1,3 @@
 #!/bin/bash
+docker build . -t trow.local/api-excercise:latest
 
-echo "No Commands Here Yet"

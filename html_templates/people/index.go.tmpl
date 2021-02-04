@@ -1,0 +1,27 @@
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Survived?</th>
+        <th>PassengerClass</th>
+        <th>Sex</th>
+        <th>Age</th>
+        <th>SiblingsOrSpousesAboard</th>
+        <th>ParentsOrChildrenAboard</th>
+        <th>Fare</th>
+        <th>UUID</th>
+    </tr>
+
+    {{range .Data}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{.Survived}}</td>
+            <td>{{.PassengerClass}}</td>
+            <td>{{.Sex}}</td>
+            <td>{{.Age}}</td>
+            <td>{{.SiblingsOrSpousesAboard}}</td>
+            <td>{{.ParentsOrChildrenAboard}}</td>
+            <td>{{.Fare}}</td>
+            <td>{{.UUID}}</td>
+        </tr>
+    {{end}}
+</table>

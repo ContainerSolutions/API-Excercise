@@ -1,0 +1,37 @@
+version: '3'
+services:
+  backend:
+    # Use target `build` instead of the end build to make it possible to run
+    # tests.
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build
+    volumes:
+      - .:/opt
+    command: >
+      /go/bin/server listen --env dev
+    ports:
+      - "80:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: "postgres"
+
+  postgres:
+    image:  anonymouzaccount/titanic-database:v5
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: passwd
+      # The `titanic-database` image has a prefilled postgres under folder
+      # /postgres, making PGDATA=postgres is necessary.
+      PGDATA: postgres
+
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

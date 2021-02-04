@@ -1,3 +1,4 @@
 #!/bin/bash
 
-echo "No Commands Here Yet"
+docker push  trow.local/api-excercise:latest
+
