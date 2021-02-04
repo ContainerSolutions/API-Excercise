@@ -16,43 +16,28 @@ jobs:
           version: "v0.9.0"
           config: .ci/kind.yaml
           name: api-cluster
-      - name: Echo
+      - name: Setup Registry
         run: |
-          echo ${{github.event.pull_request.head.repo.full_name}}
-          echo ${{github.repository}}
+          docker run -d --restart=always -p "127.0.0.1:5000:5000" --name kind-registry registry:2
       - name: Install Ingress
         run: |
           kubectl apply -f .ci/ingress.yaml
           kubectl -n ingress-nginx wait --for=condition=ready --timeout=600s pod -l app.kubernetes.io/name=ingress-nginx,app.kubernetes.io/component=controller
-      - name: Generate Certs
-        run: |
-          openssl req -new -config .ci/cert.config -keyout trow.local.key -x509 -days 1 -out trow.local.crt
-      - name: Create TLS Secret
-        run: |
-          kubectl create secret tls trow --key trow.local.key --cert trow.local.crt
-      - name: Helm Install Trow
-        run: |
-          kubectl apply -f .ci/trow.yaml
       - name: Set Routing
         run: |
           echo "127.0.0.1 trow.local" | sudo tee -a /etc/hosts
-          echo "127.0.0.1 api.awesome" | sudo tee -a /etc/hosts
-      - name: Setup Docker To Validate Certs
-        run: |
-          sudo mkdir -p /etc/docker/certs.d/trow.local/
-          sudo cp trow.local.crt /etc/docker/certs.d/trow.local/ca.crt
+          echo "127.0.0.1 kind-registry" | sudo tee -a /etc/hosts
       - name: Pull and Tag Docker Image
         run: |
           docker pull nginx:alpine
-          docker tag nginx:alpine trow.local/test/nginx:alpine
-      - name: Push to Trow
+          docker tag nginx:alpine kind-registry:5000/nginx:alpine
+      - name: Push to Local Registry
         run: |
-          kubectl wait pod/trow-0 --for condition=ready --timeout=300s
-          docker push  trow.local/test/nginx:alpine
+          docker push  kind-registry:5000/nginx:alpine
       - name: Build API Test Image
         run: |
           ./build.sh
-      - name: Push Image To Trow Registry
+      - name: Push Image To Local Registry
         run: |
           ./push.sh
       - name: Deploy Application to Kubernetes
