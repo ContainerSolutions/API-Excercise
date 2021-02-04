@@ -9,6 +9,6 @@ sleep 30
 
 kubectl -n titanic wait --for=condition=ready --timeout=300s pod -l app=postgres
 sleep 30
-kubectl -n titaninc describe pod  app=postgres
+kubectl -n titanic logs app=postgres
 kubectl -n titanic wait --for=condition=ready --timeout=300s pod -l app=titanic
 
