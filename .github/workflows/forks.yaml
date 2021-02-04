@@ -42,7 +42,7 @@ jobs:
           ./push.sh
       - name: Update Host File
         run: |
-          sed -i 's/127.0.0.1 kind-registry/#/' /etc/hosts
+          sudo sed -i 's/127.0.0.1 kind-registry/#/' /etc/hosts
       - name: Deploy Application to Kubernetes
         run: |
           ./deploy.sh
