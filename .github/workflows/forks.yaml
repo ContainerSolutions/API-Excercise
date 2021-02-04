@@ -1,69 +1,71 @@
 name: API Test
 
 on:
-  push:
-    branches:
-    - "*"
   pull_request:
     branches:
-    - "*"
+      - "*"
 
 jobs:
   run_api_test:
     runs-on: ubuntu-latest
-    if: github.repository != 'ContainerSolutions/API-Excercise'
+    if: github.event.pull_request.head.repo.full_name != 'ContainerSolutions/API-Excercise'
     steps:
-    - uses: actions/checkout@v2
-    - uses: engineerd/setup-kind@v0.5.0
-      with:
+      - uses: actions/checkout@v2
+      - uses: engineerd/setup-kind@v0.5.0
+        with:
           version: "v0.9.0"
           config: .ci/kind.yaml
           name: api-cluster
-    - name: Echo
-      run: |
-        echo ${{github.event.pull_request.head.repo.full_name}}
-        echo ${{github.repository}}
-    - name: Install Ingress
-      run: |
+      - name: Echo
+        run: |
+          echo ${{github.event.pull_request.head.repo.full_name}}
+          echo ${{github.repository}}
+      - name: Install Ingress
+        run: |
           kubectl apply -f .ci/ingress.yaml
           kubectl -n ingress-nginx wait --for=condition=ready --timeout=600s pod -l app.kubernetes.io/name=ingress-nginx,app.kubernetes.io/component=controller
-    - name: Generate Certs
-      run: |
-        openssl req -new -config .ci/cert.config -keyout trow.local.key -x509 -days 1 -out trow.local.crt
-    - name: Create TLS Secret
-      run: |
-        kubectl create secret tls trow --key trow.local.key --cert trow.local.crt
-    - name: Helm Install Trow
-      run: |
-        kubectl apply -f .ci/trow.yaml
-    - name: Set Routing
-      run: |
-        echo "127.0.0.1 trow.local" | sudo tee -a /etc/hosts
-        echo "127.0.0.1 api.awesome" | sudo tee -a /etc/hosts
-    - name: Setup Docker To Validate Certs
-      run: |
-        sudo mkdir -p /etc/docker/certs.d/trow.local/
-        sudo cp trow.local.crt /etc/docker/certs.d/trow.local/ca.crt
-    - name: Pull and Tag Docker Image
-      run: |
-        docker pull nginx:alpine
-        docker tag nginx:alpine trow.local/test/nginx:alpine
-    - name: Push to Trow
-      run: |
-        kubectl wait pod/trow-0 --for condition=ready --timeout=300s
-        docker push  trow.local/test/nginx:alpine
-    - name: Build API Test Image
-      run: |
-        ./build.sh
-    - name: Push Image To Trow Registry
-      run: |
-        ./push.sh
-    - name: Deploy Application to Kubernetes
-      run: |
-        ./deploy.sh
-    - name: Run Tests
-      run: |
-        echo "Running Awesome Tests"
-    - name: Clean Up Cluster
-      run: |
-        kind delete cluster --name api-cluster
+      - name: Generate Certs
+        run: |
+          openssl req -new -config .ci/cert.config -keyout trow.local.key -x509 -days 1 -out trow.local.crt
+      - name: Create TLS Secret
+        run: |
+          kubectl create secret tls trow --key trow.local.key --cert trow.local.crt
+      - name: Helm Install Trow
+        run: |
+          kubectl apply -f .ci/trow.yaml
+      - name: Set Routing
+        run: |
+          echo "127.0.0.1 trow.local" | sudo tee -a /etc/hosts
+          echo "127.0.0.1 api.awesome" | sudo tee -a /etc/hosts
+      - name: Setup Docker To Validate Certs
+        run: |
+          sudo mkdir -p /etc/docker/certs.d/trow.local/
+          sudo cp trow.local.crt /etc/docker/certs.d/trow.local/ca.crt
+      - name: Pull and Tag Docker Image
+        run: |
+          docker pull nginx:alpine
+          docker tag nginx:alpine trow.local/test/nginx:alpine
+      - name: Push to Trow
+        run: |
+          kubectl wait pod/trow-0 --for condition=ready --timeout=300s
+          docker push  trow.local/test/nginx:alpine
+      - name: Build API Test Image
+        run: |
+          ./build.sh
+      - name: Push Image To Trow Registry
+        run: |
+          ./push.sh
+      - name: Deploy Application to Kubernetes
+        run: |
+          ./deploy.sh
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Run Tests
+        run: |
+          pip install -r .ci/requirements.txt
+          pytest .ci/api_tester.py
+      - name: Clean Up Cluster
+        run: |
+          kind delete cluster --name api-cluster

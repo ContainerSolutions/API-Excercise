@@ -13,19 +13,19 @@ paths:
           schema:
             $ref: "#/definitions/People"
       produces:
-      - application/json
-      - text/html
+        - application/json
+        - text/html
     post:
       summary: "Add a person to the database"
       operationId: "people.add"
-      parameters: 
-      - in: body
-        name: person
-        required: true
-        schema:
-          $ref: "#/definitions/PersonData"
+      parameters:
+        - in: body
+          name: person
+          required: true
+          schema:
+            $ref: "#/definitions/PersonData"
       responses:
-        200:
+        201:
           description: "Added"
           schema:
             $ref: "#/definitions/Person"
@@ -42,15 +42,15 @@ paths:
             $ref: "#/definitions/Person"
         404:
           description: Not found
-      parameters: 
-      - in: path
-        required: true
-        name: uuid
-        type: string
-        format: uuid
+      parameters:
+        - in: path
+          required: true
+          name: uuid
+          type: string
+          format: uuid
       produces:
-      - application/json
-      - text/html
+        - application/json
+        - text/html
     put:
       summary: "Update information about one person"
       operationId: "person.update"
@@ -61,33 +61,33 @@ paths:
             $ref: "#/definitions/Person"
         404:
           description: Not found
-      parameters: 
-      - in: path
-        required: true
-        name: uuid
-        type: string
-        format: uuid
-      - in: body
-        name: person
-        required: true
-        schema:
-          $ref: "#/definitions/PersonData"          
+      parameters:
+        - in: path
+          required: true
+          name: uuid
+          type: string
+          format: uuid
+        - in: body
+          name: person
+          required: true
+          schema:
+            $ref: "#/definitions/PersonData"
       produces:
         - application/json
     delete:
       summary: "Delete this person"
       operationId: "person.delete"
       responses:
-        200:
+        204:
           description: OK
         404:
           description: Not found
-      parameters: 
-      - in: path
-        required: true
-        name: uuid
-        type: string
-        format: uuid
+      parameters:
+        - in: path
+          required: true
+          name: uuid
+          type: string
+          format: uuid
 definitions:
   People:
     type: array
@@ -95,12 +95,12 @@ definitions:
       $ref: "#/definitions/Person"
   Person:
     allOf:
-    - $ref: "#/definitions/PersonData"
-    - type: object
-      properties:
-        uuid:
-          type: string
-          format: uuid
+      - $ref: "#/definitions/PersonData"
+      - type: object
+        properties:
+          uuid:
+            type: string
+            format: uuid
   PersonData:
     properties:
       survived:
