@@ -1,0 +1,27 @@
+CREATE TYPE sex AS ENUM ('female', 'male');
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+create table titanic_passengers
+(
+    ID uuid DEFAULT uuid_generate_v4 (),
+    SURVIVED BOOLEAN,
+    PASSENGER_CLASS INT,
+    PASSENGER_NAME VARCHAR,
+    SEX sex,
+    AGE DECIMAL,
+    SIBLINGS_OR_SPOUSES_ABOARD INT,
+    PARENTS_OR_CHILDREN_ABOARD INT,
+    FARE NUMERIC,
+    PRIMARY KEY (ID)
+);
+
+COPY titanic_passengers(
+    SURVIVED,
+    PASSENGER_CLASS,
+    PASSENGER_NAME,
+    SEX,
+    AGE,
+    SIBLINGS_OR_SPOUSES_ABOARD,
+    PARENTS_OR_CHILDREN_ABOARD,
+    FARE
+) FROM '/titanic/titanic.csv' DELIMITER ',' CSV HEADER;

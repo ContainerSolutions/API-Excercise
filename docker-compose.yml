@@ -1,0 +1,40 @@
+# The two services use images hosted on the local registry.
+# To prepare for use with docker-compose, run the scripts
+# ./setup_local.sh, ./build.sh, ./push.sh
+# Furthermore, if the changes have not been built
+# into an updated image, calling docker-compose
+# on existing images will not reflect the changes.
+
+version: "3.6"
+services:
+  titanic:
+    image: kind-registry:5000/titanic:1.0.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=root
+      - POSTGRES_PORT=5432
+
+  postgres:
+    image: kind-registry:5000/titanic-postgres:1.0.0
+    restart: always
+    environment:
+      - DATABASE_HOST=127.0.0.1
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=root
+
+  pgadmin-compose:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "test@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "test123!"
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgres

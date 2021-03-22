@@ -1,0 +1,3 @@
+FROM postgres
+COPY docker_postgres_init.sql /docker-entrypoint-initdb.d/docker_postgres_init.sql
+COPY titanic.csv /titanic/titanic.csv

@@ -1,0 +1,132 @@
+---
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "Titanic"
+paths:
+  /people:
+    get:
+      summary: "Get a list of all people"
+      operationId: "people_list"
+      produces:
+      - "application/json"
+      - "text/html"
+      parameters: []
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/People"
+      x-swagger-router-controller: "Default"
+    post:
+      summary: "Add a person to the database"
+      operationId: "people_add"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "person"
+        required: true
+        schema:
+          $ref: "#/definitions/PersonData"
+      responses:
+        "201":
+          description: "Added"
+          schema:
+            $ref: "#/definitions/Person"
+      x-swagger-router-controller: "Default"
+  /people/{uuid}:
+    get:
+      summary: "Get information about one person"
+      operationId: "person_get"
+      produces:
+      - "application/json"
+      - "text/html"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        required: true
+        type: "string"
+        format: "uuid"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Person"
+        "404":
+          description: "Not found"
+      x-swagger-router-controller: "Default"
+    put:
+      summary: "Update information about one person"
+      operationId: "person_update"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        required: true
+        type: "string"
+        format: "uuid"
+      - in: "body"
+        name: "person"
+        required: true
+        schema:
+          $ref: "#/definitions/PersonData"
+      responses:
+        "200":
+          description: "Updated"
+          schema:
+            $ref: "#/definitions/Person"
+        "404":
+          description: "Not found"
+      x-swagger-router-controller: "Default"
+    delete:
+      summary: "Delete this person"
+      operationId: "person_delete"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        required: true
+        type: "string"
+        format: "uuid"
+      responses:
+        "204":
+          description: "OK"
+        "404":
+          description: "Not found"
+      x-swagger-router-controller: "Default"
+definitions:
+  People:
+    type: "array"
+    items:
+      $ref: "#/definitions/Person"
+  Person:
+    allOf:
+    - $ref: "#/definitions/PersonData"
+    - type: "object"
+      properties:
+        uuid:
+          type: "string"
+          format: "uuid"
+  PersonData:
+    properties:
+      survived:
+        type: "boolean"
+      passengerClass:
+        type: "integer"
+      name:
+        type: "string"
+      sex:
+        type: "string"
+        enum:
+        - "male"
+        - "female"
+        - "other"
+      age:
+        type: "integer"
+      siblingsOrSpousesAboard:
+        type: "integer"
+      parentsOrChildrenAboard:
+        type: "integer"
+      fare:
+        type: "number"

@@ -1,12 +1,12 @@
 swagger: "2.0"
 info:
   title: "Titanic"
-  version: "1.0"
+  version: "1.0.0"
 paths:
   "/people":
     get:
       summary: "Get a list of all people"
-      operationId: "people.list"
+      operationId: "people_list"
       responses:
         200:
           description: OK
@@ -17,7 +17,7 @@ paths:
         - text/html
     post:
       summary: "Add a person to the database"
-      operationId: "people.add"
+      operationId: "people_add"
       parameters:
         - in: body
           name: person
@@ -34,7 +34,7 @@ paths:
   "/people/{uuid}":
     get:
       summary: "Get information about one person"
-      operationId: "person.get"
+      operationId: "person_get"
       responses:
         200:
           description: OK
@@ -53,7 +53,7 @@ paths:
         - text/html
     put:
       summary: "Update information about one person"
-      operationId: "person.update"
+      operationId: "person_update"
       responses:
         200:
           description: Updated
@@ -76,7 +76,7 @@ paths:
         - application/json
     delete:
       summary: "Delete this person"
-      operationId: "person.delete"
+      operationId: "person_delete"
       responses:
         204:
           description: OK
